@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="./asset/css/login.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+<body>
+
+    
+<section>
+
+<!--    action="http://localhost:47788/soft/user/login" -->
+<form method="POST" action="" id="form-login">
+    <div class="hidden login-alert">
+        Login failed check id or password
+    </div>
+    <div class="menu">
+<!--    <a href="/softconn/sign">SIGN IN</a>-->
+<!--    <link href="css/login.html" />-->
+    <button type="button" id="sign-button" value="SIGNIN">SIGN IN</button>
+    </div>
+    <label>ENTER ID</label>
+    <div class="id-field">
+    <input type="text" id="id-check-form"
+           name="user-id" placeholder="enter id">
+    <button type="button" id='id-check' class='hidden' value="check">check</button>
+    </div>
+    <label>ENTER PASSWORD</label>
+    <input type="password" name="user-pw" placeholder="enter pw">
+    <input type="submit" id="sub-button" value="LOGIN">
+</form>
+
+
+</section>
+
+</body>
+<script src="./asset/js/login.js"></script>
+</html>

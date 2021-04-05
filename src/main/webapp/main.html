@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>main</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</head>
+
+<body>
+<nav>
+
+<ul id="main-menu">
+    <li id="home"><a href="http://localhost:47788/soft/conn">main</a></li>
+    <li id="logout">
+        <a href="http://localhost:47788/soft/user/logout">log out</a>
+    </li>
+    <li id="user/info"><a></a>info</li>
+    <li id="room/list">
+        room list
+    </li>
+    <li id="chat"></li>
+    <li id="user/list" >
+        user list
+    </li>
+</ul>
+
+</nav>
+<div class="return-msg">
+    <span class="success-msg hidden">friend add success</span>
+    <span class="failed-msg hidden">friend add failed</span>
+</div>
+
+
+<section>
+    <div class="return-msg">
+    <span class="success-msg hidden">friend add success</span>
+    <span class="failed-msg hidden">friend add failed</span>
+</div>
+    <div id="friends-list">
+        
+
+    </div>
+
+    <div id="main-view">
+        <div class="msg-area" style="overflow: scroll">
+                <ul>
+                    <li>
+        
+                    </li>
+                </ul>
+                
+        
+                <form class="msg-input">
+                    <input type="hidden" name="roomId" value="{{roomId}}" />
+                    <input type="hidden" name="type" value="MSG" />
+                    <input type="text" class="text-input" id={{roomId}} name=message 
+                    placeholder="메세지를 입력하세요!" />
+                    <input type="submit" class="submit">
+                </form>
+            
+        
+        </div>
+       
+
+    </div>
+
+    <div id="info-panel" >
+    </div>
+</section>
+<footer>
+    <div id="popup-panel">
+       
+        </div>
+    </div>
+    <div id="footer-panel">
+        <!-- <button type="button" value="대화" id="p?{{userId}}" class="private-menu-button">대화</button> -->
+    </div>
+
+    
+    
+</footer>
+</body>
+
+
+<script type="text/x-mustache" id="user-list-tmpl">
+    <span> {{listName}} list</span>
+    <ul id="user-list-main">
+        {{#users}}
+            <li id="user-name-{{userId}}">
+                <span>{{userId}}</span>
+                <button class="online-check online-{{online}}"></button>
+                <div class="user-menu" value="{{userId}}">
+                    <button type="button" value="info" name="{{userId}}">info</button>
+                    <button type="button" value="DM" name="{{userId}}">DM</button>
+                    <button type="button" value="addFriend" name="{{userId}}">add Friend</button>
+                </div>
+            </li>
+        {{/users}}
+    </ul>
+    
+</script>
+<script type="text/x-mustache" id="room-list-tmpl">
+<span> room list</span>
+<ul id="room-list-main">
+    <li>room name <a href="/room/{{room-name}}">{{room-name}}</a> current user {{current-user}} </li>
+</ul>
+</script>
+<script type="text/x-mustache" id="chat-tmpl">
+    <span> {{roomName}} </span>
+    <div  class="msg-area" style="overflow: scroll">
+        <div class="room-mod-menu">
+            <ul>
+                <li>
+                    <button type="button" value="delete-room">delete</button>
+                    <button type="button" value="change-room">change</button>
+                </li>
+            </ul>
+            <form class="room-mode-form hidden">
+                <input type="hidden" name="roomId" value="{{roomId}}" />
+                <input type="hidden" value="{{roomName}}" />
+                <input type="text" name="roomName" placeholder="type roomname" />
+            </form>
+        </div>
+        
+        <ul>
+            <li>
+
+            </li>
+        </ul>
+        
+
+        <form id={{roomId}} class="msg-input">
+            <input type="hidden" name="roomId" value={{roomId}} />
+            <input type="hidden" name="type" value="ROOM_MSG" />
+            <input type="text" class="text-input"  name="message" 
+            placeholder="메세지를 입력하세요!" />
+            <input type="submit" class="submit">
+        </form>
+    
+
+    </div>
+</script>
+
+<script type="text/x-mustache" id="user-update-tmpl">
+    <form>
+    <label>User Id : {{userId}}</label>
+    <input id="id-update" type="text">
+    <label>user email : {{email}}</label>
+    <input id='email-update' type="text">
+    <input type="submit">
+    </form>
+</script>
+
+<script type="text/x-mustache" id="friend-info-tmpl">
+    <div>
+        <button type="button" value="self">my info</button>
+        <span>user id : {{userId}}</span>
+        <span>user email : {{email}}</span>
+        <div class="user-menu">
+            <button type="button" value="info">info</button>
+        </div>
+    </div>
+</script>
+<script type="text/x-mustache" id="greetings">
+    Hi {{userId}} Greetings
+</script>
+<script type="text/x-mustache" id="private-chat-tmpl">
+        <div class="private-container">
+
+            <div id="p-{{friendId}}-panel" class="hidden-pop private-menu-panel">
+                <button class='close-private' type="button" value="p-{{friendId}}" >close</button>
+                <ul class="private-chat-panel">
+                </ul>
+                <form class="private-input">
+                    <input type="hidden" name="type" value="PRIVATE_MSG" />
+                    <input type="hidden" name="receiverId" value="{{friendId}}" />
+                    <input type="text" class="text-input" name="message" placeholder="type messages"/>
+                </form>
+                
+            </div>
+        </div>
+</script>
+<script type="text/x-mustache" id="private-button-tmpl">
+    <button type="button" value="대화" id="p-{{friendId}}" class="private-menu-button">chat with {{friendId}}</button>
+</script>
+
+<script type="text/x-mustache" id="list-tmpl">
+    <span>{{listName}} list</span>
+    {{#room}}
+    <div class="room-mod-menu">
+        <ul class="">
+            <li>
+                <button type="button" value="create-room">create</button>
+                <button type="button" value="search-room">search</button>
+            </li>
+        </ul>
+        <form class="room-mode-form hidden">
+            <input type="hidden" name="roomId" value="{{roomId}}" />
+            <input type="hidden" value="{{roomName}}" />
+            <input type="text" name="roomName" placeholder="type roomname" />
+        </form>
+    </div>
+    {{/room}}
+    <ul class="user-list-main">
+        {{#users}}
+            <li id="user-name-{{userId}}">
+                <span>{{userId}}</span>
+                <button class="online-check online-{{online}}"></button>
+                <div class="user-menu" value="{{userId}}">
+                    <button type="button" value="info" name="{{userId}}">info</button>
+                    <button type="button" value="DM" name="{{userId}}">DM</button>
+                    <button type="button" value="addFriend" name="{{userId}}">add Friend</button>
+                </div>
+            </li>
+        {{/users}}
+        {{#rooms}}
+            <li id="room-id-{{roomId}}" value="{{roomName}}">
+                <span>{{roomName}}</span>
+                <div name={{roomId}} class="online-user-number" >current user : {{currentUsers}}</div>
+                <div class="user-menu" value="{{roomId}}">
+                    <button type="button" value="room-info" name="{{roomId}}_{{roomName}}">INFO</button>
+                    <button type="button" value="enter" name="{{roomId}}_{{roomName}}">ENTER</button>
+                </div>
+            </li>
+        {{/rooms}}
+    </ul>
+</script>
+
+
+<script type="text/x-mustache">
+    {{! <div class="room-mod-menu">
+        <ul>
+            <li>
+                
+                <button type="button" value="delete-room">delete</button>
+                <button type="button" value="change-room">change</button>
+            </li>
+        </ul>
+    </div>
+    <form class="room-mode-form" id=''>
+        <input type="hidden" name="roomId" value="{{roomId}}" />
+        <input type="hidden" value="{{roomName}}" />
+        <input type="text" name="roomName" placeholder="type roomname" />
+    </form>
+    <button type="button" value="create-room">create</button> }}
+    <button type="button" value="search-room">search</button>  }}
+    
+</script>
+
+
+
+
+<script type="text/x-mustache" id="user-info-tmpl">
+    <div class="user-info-panel">
+        <div class="user-photo-panel">
+            <img alt="user Photo" src="" />
+        </div>
+        <div class="info-field">
+            <span>{{userId}}</span>
+            <span>{{email}}</span>
+            <div class="user-menu" value="{{userId}}">
+                <button type="button" value="info" name="{{userId}}">info</button>
+                <button type="button" value="DM" name="{{userId}}">DM</button>
+                <button type="button" value="addFriend" name="{{userId}}">add Friend</button>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script type="text/x-mustache" id="room-info-tmpl">
+    <div class="room-info-panel">
+        <span class="tag"><b>{{roomName}}</b></span>
+        <span class="tag"><b>{{crtDate}}</b></span>
+        <div name={{roomId}} class="online-user-number" >current user : {{currentUsers}}</div>
+            <div class="user-menu" value="{{roomId}}">
+                <button type="button" value="room-info" name="{{roomId}}_{{roomName}}">INFO</button>
+                <button type="button" value="enter" name="{{roomId}}_{{roomName}}">ENTER</button>
+        </div>
+        <ul class="user-list-main">
+            {{#roomUsers}}
+            <li id="user-name-{{userId}}">
+                <span>{{userId}}</span>
+                <button class="online-check online-{{online}}"></button>
+                <div class="user-menu" value="{{userId}}">
+                    <button type="button" value="info" name="{{userId}}">info</button>
+                    <button type="button" value="DM" name="{{userId}}">DM</button>
+                    <button type="button" value="addFriend" name="{{userId}}">add Friend</button>
+                </div>
+            </li>
+            {{/roomUsers}}
+            
+        </ul>
+
+
+    </div>
+
+</script>
+
+
+
+
+
+<script src="js/main.js"></script>
+<script src="js/socket.js"></script>
+</html>
+

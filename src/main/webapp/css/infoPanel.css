@@ -1,0 +1,54 @@
+
+
+.user-info-panel{
+    display: inherit;
+    flex-direction: column;
+    align-items: center;
+    height: 40%;
+    width: 90%;
+    margin-top: 20px;
+    margin-right: 0px;
+    padding: 0px;
+    box-sizing : border-box;
+    /* justify-self: start; */
+    background-color: #364547;
+
+}
+
+.user-photo-panel {
+    background-color: white;
+    width: 60%;
+    height: 30%;
+
+}
+
+.info-field {
+    text-align: center;
+    width: 90%;
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.info-field:hover .user-menu{
+    transform: scaleY(1);
+}
+
+.room-info-panel li:hover .user-menu{
+    transform: scaleY(1);
+}
+
+.room-info-panel .online-user-number:hover .user-menu{
+    transform: scaleY(1);
+}
+
+.room-info-panel .tag{
+    display: block;
+    font: bold;
+    color: #364547;
+    text-align: center;
+
+}

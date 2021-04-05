@@ -1,0 +1,157 @@
+/* 
+html {
+    background-color: #1E2021;
+}
+
+#room-name {
+    position: relative;
+    font-size: 30px;
+    color: white;
+    border: none;
+
+    text-align: center;
+    
+}
+
+#send-roomlist {
+    position: relative;
+    left: 33%;
+    background-color: inherit;
+    font-size: 15px;
+    color: wheat;
+}
+section {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width:700px;
+    height: 96%;
+    position: fixed;
+    left: 33%;
+    top: 0%;
+    box-sizing: border-box;
+    
+    
+}
+
+#list-div{
+
+    box-sizing: border-box;
+    left: 50%;
+    height: 80%;
+    width: 30%;
+    background-color: #393e46;
+    margin-left: 10px;
+    border-radius: 5px;
+} */
+.msg-area span {
+    justify-self: flex-start;
+    font-size: 20px;
+    color:aliceblue;
+}
+
+.msg-area {
+    z-index: 2;
+/*    position: fixed;*/
+/*    position: relative;*/
+    border-radius: 5px;
+    /* left: 35%; */
+/*    align-self: center;*/
+    /* top: 10%; */
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+/*    width:60%;*/
+    height: 95%;
+    margin: 0px;
+    margin-top: 14px;
+    padding: 0px;
+    background-color: #414141;
+    box-sizing: border-box;
+    align-self: center;
+}
+.msg-area ul {
+    z-index: 0;
+}
+
+.msg-input {
+    margin-top: 5px;
+    margin-left: 5px;
+    /* position: relative; */
+    /* align-self: center; */
+    justify-self: flex-end;
+    height: 30px;
+    width: 50%;
+    background-color: #525252;
+    box-sizing: border-box;
+    top: 90%;
+    border-radius: 3px;
+    display: flex;
+
+/*    justify-content: center;*/
+    align-items: center;
+}
+
+.text-input {
+    background-color: #525252;
+    box-sizing: border-box;
+/*    border: none;*/
+    border-radius: 3px;
+    height: 27px;
+    width:95%;
+    border-bottom-width: 1px;
+    border-color: wheat;
+    
+}
+
+.submit {
+    /* position: absolute; */
+    right: 0px;
+    box-sizing: border-box;
+    display: inline-block;
+    width: 10%;
+    height: inherit;
+    padding: 0px;
+    margin: 0px;
+/*    height: 25px;*/
+    position: relative;
+    right: 0px;
+    background-color: inherit;
+/*    border-color: white;*/
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: wheat;
+    color:wheat;
+    border-color: wheat;
+}
+
+.msg-area ul {
+    height: 90%;
+    width:90%;
+    margin-top:20px;
+    list-style: none;
+    padding: 0px;
+    display:flex;
+    flex-direction:column;
+    align-items: start;
+    
+}
+
+.msg-area li{
+    text-align: left;
+    color: wheat;
+}
+
+
+/* #user-list{
+    width:95%;
+    justify-content:start;
+    height:100%;
+}
+
+#user-list li{
+    margin-left:10px;
+} */

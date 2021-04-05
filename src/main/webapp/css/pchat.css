@@ -1,0 +1,107 @@
+footer {
+    position: fixed;
+/*    margin-bottom: 0px;*/
+/*    padding: 0px;*/
+    bottom:0px;
+    height: 500px;
+    width: 100%;
+    margin: 0px;
+    padding:0px;
+    background-color: transparent;
+    
+}
+
+.private-menu-panel {
+   position: relative;
+    border:2px solid black;
+    border-radius: 3px;
+    transform: scaleY(1);
+    transition: transform 0.15s ease-in;
+    height: 100%;
+    width: 100%;
+/*    transform: scaleY(0);*/
+    transform-origin: bottom;
+    margin: 0px;
+    padding:0px;
+    min-width: 80px;
+    z-index: 5;
+}
+
+.hidden-pop {
+/*    display: none;*/
+    transform: scaleY(0);
+    transition: transform 0.1 ease-out;
+    z-index: -1;
+/*    transform-origin: top;*/
+}
+
+.private-menu-button {
+    min-width: 100px;
+    height: 30%;
+    background-color: wheat;
+}
+
+.private-chat-panel {
+    height: 92%;
+    background-color: white;
+}
+.private-input {
+    height: 8%;
+    margin: 0px;
+    padding:0px;
+}
+
+.private-input input{
+    height: 100%;
+    
+}
+.private-input input[type="text"]{
+/*    position: relative;*/
+    width: 100%;
+/*    float: left;*/
+}
+
+#popup-panel {
+    position: relative;
+    z-index: -3;
+    height: 80%;
+    
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+#footer-panel {
+    height: 20%;
+}
+
+.private-container {
+    position: relative;
+    z-index: inherit;
+    z-index: -1;
+    height: 100%;
+    margin-bottom: 2px;
+    
+/*    background-color: white;*/
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    
+}
+
+#popup-panel ul {
+    position: relative;
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+    z-index: 6;
+}
+
+.private-container li{
+    /* z-index: 6; */
+    color: black;
+    font-size: 18px;
+    border: 1px solid lightgreen;
+}
