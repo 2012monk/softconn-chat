@@ -27,24 +27,6 @@ public class SoftConn extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         request.getRequestDispatcher("/main.html").forward(request, response);
-
-//        String userId = SessionHandler.getUserId(request);
-//        String sessionID = SessionHandler.getSessionId(request);
-//        String op = request.getPathInfo();
-//        Mustache m = null;
-//
-//        if (SessionHandler.verifySession(sessionID)) {
-////            switch (op.split("/")[1]){
-////                case "user-list":
-////                    m = mf.compile("user-list.html");
-////                    m.execute(writer, service.getUserList());
-////            }
-//
-//            request.getRequestDispatcher("/main.html").forward(request, response);
-////            System.out.println(sessionID);
-//        }else {
-//            request.getRequestDispatcher("/login.html").forward(request, response);
-//        }
     }
 
 

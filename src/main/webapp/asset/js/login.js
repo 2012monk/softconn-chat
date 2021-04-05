@@ -1,6 +1,7 @@
 // const _URL = "http://localhost:47788/soft/user/check";
 // const _URL = "http://112.169.196.76:47788/soft/login";
-const _URL = "http://112.187.182.64:47788/soft/login";
+// const _URL = "http://112.187.182.64:47788/soft/login"; //HOME
+const _URL = "https://112.169.196.76:47788/soft/login"
 
 const form = document.querySelector('form');
 const input = document.getElementById('id-check-form');
