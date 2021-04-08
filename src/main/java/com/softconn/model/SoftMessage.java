@@ -16,7 +16,7 @@ import java.util.List;
 //@JsonIgnoreProperties({"senderId", "roomId", "type", "message", "receiverId", "sendDate"})
 public class SoftMessage implements Serializable {
 
-    private static SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private String message;
     private String roomId;
     private String receiverId;
@@ -51,13 +51,17 @@ public class SoftMessage implements Serializable {
     }
 
     public SoftMessage(){
-
+        this.userList = new HashMap<>();
         this.sendDate = fmt.format(new Date());
     }
 
     public void setUserList(List<String> userList) {
         this.currentUserNumber = userList.size();
         this.userList.put("currentUsers", userList);
+    }
+
+    public void setCurrentUserNumber(int currentUserNumber) {
+        this.currentUserNumber = currentUserNumber;
     }
 
     public void setMessage(String message) {

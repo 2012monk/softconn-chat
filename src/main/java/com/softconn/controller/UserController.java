@@ -210,15 +210,16 @@ public class UserController extends HttpServlet {
     public void handleAddFriend (HttpServletRequest rq, HttpServletResponse rs) throws IOException{
         String userId = (String) rq.getSession().getAttribute("userId");
         String friendId = rq.getParameter("friendId");
-        System.out.println(rq.getQueryString());
-        System.out.println(friendId);
-        System.out.println(userId);
-        if (service.addFriend(userId, friendId) == Token.ADD_SUCCESS) {
-            System.out.println("Sueccess");
-            rs.getWriter().write("sucess");
-        }else {
-            rs.getWriter().write("failed");
-        }
+//        System.out.println(rq.getQueryString());
+//        System.out.println(friendId);
+//        System.out.println(userId);
+//        if (service.addFriend(userId, friendId) == Token.ADD_SUCCESS) {
+//            System.out.println("Sueccess");
+//            rs.getWriter().write("sucess");
+//        }else {
+//            rs.getWriter().write("failed");
+//        }
+        rs.getWriter().write(service.addFriend(userId, friendId).name());
     }
 
 }

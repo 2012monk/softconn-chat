@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
-import java.io.BufferedReader;
 import java.io.IOException;
 
 @WebServlet(name = "LoginController", value = "/login/*")
@@ -23,18 +22,23 @@ public class LoginController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getRequestURI().split("/")[1];
+//        String[] path = getPath(request);
+        String path = getPath(request);
         if (path.equals("logout")){
             handleLogOut(request, response);
         }
         else{
-            request.getRequestDispatcher("/asset/login.html").forward(request, response);
+
+            request.getRequestDispatcher("/asset/login.html").include(request, response);
         }
     }
 
+
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String path = request.getRequestURI().split("/")[3];
+//        String path =getPath(request)[1];
+        String path = getPath(request);
         log.warn(path);
 
         switch (path) {
@@ -51,19 +55,32 @@ public class LoginController extends HttpServlet {
     }
 
 
+//
+//    public String[] getPath(HttpServletRequest rq){
+//        String path = rq.getRequestURI().substring(1);
+//        if (path.split("/").length == 1){
+//            return new String[2];
+//        }
+//        return path.split("/");
+//    }
+
+    public String getPath(HttpServletRequest rq){
+        String path = rq.getRequestURI().substring(1);
+        if (path.split("/").length == 1){
+            return "";
+        }
+        else return path.split("/")[1];
+    }
+
 
     public void handleLogin (HttpServletRequest request, HttpServletResponse res) throws IOException, ServletException {
         String userId = request.getParameter("user-id");
         String pw = request.getParameter("user-pw");
 
-
-
-
         Token token = service.auth(userId, pw);
 
         log.info(token);
         if (token == Token.VERIFIED){
-
             handler.createSession(request, userId);
         }
 
@@ -72,7 +89,7 @@ public class LoginController extends HttpServlet {
 
     public void handleLogOut (HttpServletRequest rq, HttpServletResponse rs) throws ServletException, IOException {
         rq.getSession().invalidate();
-        rq.getRequestDispatcher("/").forward(rq, rs);
+        rs.sendRedirect("/");
     }
 
     public void handleSignIn (HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -81,21 +98,20 @@ public class LoginController extends HttpServlet {
         String email = request.getParameter("email");
         email = "google.com";
         service.create(userId,pw,email);
-        log.info(request.getSession().getAttribute("userId"));
-        request.getRequestDispatcher("/").forward(request,response);
+
+//        request.getRequestDispatcher("/").forward(request,response);
+        response.sendRedirect("/");
 
     }
 
     public void handleId (HttpServletRequest request, HttpServletResponse res) throws IOException{
-        BufferedReader br = new BufferedReader(request.getReader());
-        String query = br.readLine();
-        String userId = query.split("=")[1];
+//        BufferedReader br = new BufferedReader(request.getReader());
+//        String query = br.readLine();
+//        String userId = query.split("=")[1];
+        String userId = request.getParameter("userId");
+        log.info(userId);
         try {
-            if (service.check(userId) == Token.ID_OVERLAP) {
-                res.getWriter().write("overlap");
-            } else {
-                res.getWriter().write("free");
-            }
+            res.getWriter().write(service.check(userId).name());
         }catch (Exception e){
             e.printStackTrace();
         }

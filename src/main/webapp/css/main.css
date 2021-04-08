@@ -1,10 +1,14 @@
 @import 'pchat.css';
 @import 'chatform.css';
 @import 'infoPanel.css';
+@import url('https://fonts.googleapis.com/css2?family=Oxygen&display=swap');
+
+
 html, body {
     width: 100%;
     height: 100%;
     background-color: #252525;
+    font-family: 'Oxygen', sans-serif;
     /* display: flex; */
     /* flex-direction: column;
     justify-content: space-between;
@@ -12,6 +16,12 @@ html, body {
     color:wheat;
 }
 
+.greetings {
+    text-align: center;
+    font-size: 26px;
+    position: absolute;
+    left: 17%;
+}
 
 section {
     position:relative;
@@ -107,6 +117,11 @@ nav {
     cursor:pointer;
 }
 
+#friends-list>span{
+    text-align: center;
+    font-size: 15px;
+}
+
 .user-list-main {
     display: flex;
     flex-direction: column;
@@ -119,7 +134,7 @@ nav {
 }
 
 .user-list-main li {
-    height: 15%;
+    /* height: 15%; */
     width: 80%;
     box-sizing: border-box;
     border-radius: 6px;
@@ -221,7 +236,7 @@ nav {
 
 .private-container .close-private{
     float:left;
-    z-index: index inherit;;
+    /*z-index: index inherit;*/
     margin:0px;
     padding:0px;
 
@@ -270,3 +285,9 @@ nav {
     color: #111;
 }
 
+
+.msg-area ul{
+    border: 1px solid #6e7c7c;
+    
+
+}

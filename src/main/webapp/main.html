@@ -6,16 +6,16 @@
     <link rel="stylesheet" href="css/main.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="/asset/js/config.js"></script>
 </head>
 
 <body>
 <nav>
 
 <ul id="main-menu">
-    <li id="home"><a href="http://localhost:47788/soft/conn">main</a></li>
+    <li id="home"><a href="https://alconn.co">main</a></li>
     <li id="logout">
-        <a href="http://localhost:47788/soft/user/logout">log out</a>
+        <a href="https://alconn.co/user/logout">log out</a>
     </li>
     <li id="user/info"><a></a>info</li>
     <li id="room/list">
@@ -32,6 +32,7 @@
     <span class="success-msg hidden">friend add success</span>
     <span class="failed-msg hidden">friend add failed</span>
 </div>
+<div class="greetings"><span ></span></div>
 
 
 <section>
@@ -112,12 +113,9 @@
     <span> {{roomName}} </span>
     <div  class="msg-area" style="overflow: scroll">
         <div class="room-mod-menu">
-            <ul>
-                <li>
-                    <button type="button" value="delete-room">delete</button>
-                    <button type="button" value="change-room">change</button>
-                </li>
-            </ul>
+            <button type="button" value="delete-room">delete</button>
+            <button type="button" value="change-room">change</button>
+            <button type="button" value="room-info">info</button>
             <form class="room-mode-form hidden">
                 <input type="hidden" name="roomId" value="{{roomId}}" />
                 <input type="hidden" value="{{roomName}}" />
@@ -217,7 +215,7 @@
             </li>
         {{/users}}
         {{#rooms}}
-            <li id="room-id-{{roomId}}" value="{{roomName}}">
+            <li id="roomid{{roomId}}" value="{{roomName}}">
                 <span>{{roomName}}</span>
                 <div name={{roomId}} class="online-user-number" >current user : {{currentUsers}}</div>
                 <div class="user-menu" value="{{roomId}}">

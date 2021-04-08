@@ -11,8 +11,8 @@ import java.util.List;
 
 public class UserService {
 
-    private static HashMap<String, SoftUser> userList = new HashMap<>();
-    private static LinkedList<String> activeUsers = new LinkedList<>();
+    private static final HashMap<String, SoftUser> userList = new HashMap<>();
+    private static final LinkedList<String> activeUsers = new LinkedList<>();
 
     private final UserAcess access = new UserAcess();
 
@@ -26,6 +26,8 @@ public class UserService {
                 .build();
         return access.login(token);
     }
+
+
 
     public Token create(String userId, String userPw, String email) {
         SoftUser user = SoftUser
@@ -45,12 +47,9 @@ public class UserService {
         return access.getUserInfo(userId);
     }
 
-//    public String verifySession (String sessionId) {
-//        return access.session(sessionId);
-//    }
 
     public List<SoftUser> getUserList () {
-        return access.users();
+        return UserAcess.users();
     }
 
     public List<SoftUser> getUserList (String userId) {

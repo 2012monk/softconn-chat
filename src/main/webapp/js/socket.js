@@ -1,11 +1,26 @@
-// let socket_url = 'ws://localhost:47788/soft/melt/user/1';
-// const SOCKET_URL = 'ws://112.169.196.76:47788/soft/melt/user/1';
-const SOCKET_URL = 'ws://112.187.182.64:47788/soft/melt/user/1';
-// const SOCKET_URL = "ws://112.187.182.64:47788"; //HOME
+const SOCKET_URL = window.CONFIG.SOCKET_URL;
 const socket = new WebSocket(SOCKET_URL);
 
 
+const msgForm = {
+    online(id) {
+        return id + "entered greetings!" 
+    },
 
+    offline(id) {
+        return id + "just left bye!"
+    },
+
+    roomUpdate(json){
+        const id = json.roomId;
+        try{
+            document.querySelector('#roomid'+id+' .online-user-number')
+            .innerText = "current user : " + json.currentUserNumber
+        }catch(error){}
+    }
+
+
+}
 
 socket.onopen = (e) => {
     // socket.send("hello");
@@ -41,12 +56,27 @@ socket.onmessage = (e) => {
     }
 
     if (json.type.includes("NOTIFY")){
+        let msg = "";
+        if (json.type === "NOTIFY_ONLINE") {
+            msg = msgForm.online(json.userId);
+        }
+
+        if (json.type === "NOTIFY_OFFLINE") {
+            msg = msgForm.offline(json.userId);
+        }
+
+        if (json.type === "NOTIFY_ROOM"){
+            msgForm.roomUpdate(json);
+        }
         console.log(JSON.stringify(json)+"NOTIFY");
-        document.querySelector('.return-msg').innerText = JSON.stringify(json);
+        document.querySelector('.return-msg').innerText = msg;
+        
         document.querySelector('.return-msg').classList.remove('disappear');
-        inerval=setTimeout(function(){
+
+        const interval=setTimeout(function(){
             document.querySelector('.return-msg').classList.add('disappear');
         }, 5000)
+
     }
 }
 
@@ -130,3 +160,11 @@ document.querySelector('#popup-panel').addEventListener('submit', handleMsgSend)
 
 // document.querySelector('')
 
+window.addEventListener('beforeunload', function(e) {
+    e.preventDefault();
+    const msg = {
+        'roomId' : roomId,
+        'type' : 'ROOM_OUT'
+    }
+    socket.send(JSON.stringify(msg));
+})

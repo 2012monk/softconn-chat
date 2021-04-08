@@ -22,7 +22,7 @@ public class SessionHandler {
 
     private static final String ENCRYPT_KEY = "";
     Logger log = Logger.getGlobal();
-    private static UserAcess access = new UserAcess();
+    private static final UserAcess access = new UserAcess();
 
     public static String getSessionId(HttpServletRequest request) {
         HttpSession session = null;
@@ -50,7 +50,12 @@ public class SessionHandler {
         String sessionId = getSessionId(rq);
         if (sessionId != null){
             System.out.println(rq.getSession().getCreationTime());
-            return access.session(sessionId);
+            String userId = access.getUserSession(sessionId);
+            if (userId != null){
+                rq.getSession().setAttribute("userId", userId);
+                rq.getSession().setAttribute("sessionId", sessionId);
+            }
+            return true;
         }else{
             return false;
         }
@@ -64,7 +69,7 @@ public class SessionHandler {
 
     public void createSession (HttpServletRequest rq, String userId) {
 //        String sql = "INSERT INTO SESS_REPO (USER_ID, SESSION_ID) VALUES (?,?)";
-        String sql = "{call SESS_AUTH(?,?)}";
+        String sql = "{call SESS_IN(?,?)}";
         String sessId = generateSessionId();
         HttpSession session = rq.getSession();
         session.setAttribute("sessionId", sessId);
@@ -79,10 +84,14 @@ public class SessionHandler {
 //            int t = call.executeUpdate();
 //            if (t>0) conn.commit();;
 //            System.out.println(t);
-            call.execute();
+//            call.execute()
+            if (call.executeUpdate() > 0) conn.commit();
+            System.out.println(call.executeUpdate());
             close(conn);
         }catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            close(conn);
         }
 
     }

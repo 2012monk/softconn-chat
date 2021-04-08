@@ -25,9 +25,10 @@ public class RoomController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String[] path = request.getPathInfo().split("/");
-        log.info(Arrays.toString(path));
-        switch (path[1]){
+//        String[] path = request.getPathInfo().split("/");
+//        log.info(Arrays.toString(path));
+        String path = getPath(request);
+        switch (path){
             case "list":
                 sendRoomList(response);
                 break;
@@ -40,9 +41,11 @@ public class RoomController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String[] path = request.getPathInfo().split("/");
-        log.info((String) request.getParameter("roomName"));
-        switch (path[1]){
+//        String[] path = request.getPathInfo().split("/");
+        log.info(request.getParameter("roomName"));
+        String path = getPath(request);
+        log.info(path);
+        switch (path){
             case "create":
                 createRoomHandle(request,response);
                 break;
@@ -53,6 +56,14 @@ public class RoomController extends HttpServlet {
                 updateRoomHandle(request, response);
                 break;
         }
+    }
+
+    public String getPath(HttpServletRequest rq){
+        String path = rq.getRequestURI().substring(1);
+        if (path.split("/").length == 1){
+            return "";
+        }
+        else return path.split("/")[1];
     }
 
     public void sendRoomInfo (HttpServletRequest rq, HttpServletResponse rs) {
@@ -83,15 +94,18 @@ public class RoomController extends HttpServlet {
 
     public void createRoomHandle (HttpServletRequest rq, HttpServletResponse rs) throws IOException, ServletException{
         String roomName = rq.getParameter("roomName");
+        String userId = (String) rq.getSession().getAttribute("userId");
         log.info(roomName);
-        rs.getWriter().write(service.createRoomService(roomName).name());
+        rs.getWriter().write(service.createRoomService(roomName, userId).name());
     }
 
     public void deleteRoomHandle (HttpServletRequest rq, HttpServletResponse rs) throws IOException, ServletException {
         String roomId = rq.getParameter("roomId");
-        String roomName = rq.getParameter("roomName");
-//        rs.getWriter().write(service.deleteRoomService(roomId).name());
-        rq.getRequestDispatcher("/").forward(rq, rs);
+        String masterId = (String) rq.getSession().getAttribute("userId");
+        log.info(roomId, masterId);
+        log.info(service.deleteRoomService(roomId, masterId).name());
+//        rq.getRequestDispatcher("/").forward(rq, rs);
+        rs.sendRedirect("/");
     }
 
     public void updateRoomHandle (HttpServletRequest rq, HttpServletResponse rs) throws IOException, ServletException {

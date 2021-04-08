@@ -1,7 +1,4 @@
-// const _URL = "http://localhost:47788/soft/user/check";
-// const _URL = "http://112.169.196.76:47788/soft/login";
-// const _URL = "http://112.187.182.64:47788/soft/login"; //HOME
-const _URL = "https://112.169.196.76:47788/soft/login"
+const _URL = window.CONFIG.LOGIN_URL;
 
 const form = document.querySelector('form');
 const input = document.getElementById('id-check-form');
@@ -48,29 +45,52 @@ function idOverlapCheck(e) {
         alert('아이디를 입력하세요!');
         return;
     }
+    const f = new URLSearchParams()
+    f.append("userId", input.value);
+
+    // console.log(_url);
+    fetch(_URL+"/check", {
+        method:'POST',
+        body:f
+    })
+        .then((res) => {
+        return res.text();
+    })
+    .then((data) => {
+        if (data === 'ID_OVERLAP') {
+            alert('중복된 아이디입니다.');
+            input.value = "";
+        }else{
+            isChecked = true;
+            alert('사용가능합니다!');
+            isChecked = true;
+            // input.value = id;
+            checkdId.push(id);
+        }
+    })
 
     const req = new XMLHttpRequest();
 
-    req.onreadystatechange = (e) => {
-        if (req.readyState === XMLHttpRequest.DONE){
-            if (req.status === 200) {
-                const data = req.responseText;
-                if (data === 'overlap') {
-                    alert('중복된 아이디입니다.');
-                    input.value = "";
-                }else{
-                    isChecked = true;
-                    alert('사용가능합니다!');
-                    isChecked = true;
-                    // input.value = id;
-                    checkdId.push(id);
-                }
-            }
-        }
-    }
-    req.open('POST', _URL);
-    req.setRequestHeader('Content-Type', 'text/html');
-    req.send(`userid=${id}`);
+    // req.onreadystatechange = (e) => {
+    //     if (req.readyState === XMLHttpRequest.DONE){
+    //         if (req.status === 200) {
+    //             const data = req.responseText;
+    //             if (data === 'overlap') {
+    //                 alert('중복된 아이디입니다.');
+    //                 input.value = "";
+    //             }else{
+    //                 isChecked = true;
+    //                 alert('사용가능합니다!');
+    //                 isChecked = true;
+    //                 // input.value = id;
+    //                 checkdId.push(id);
+    //             }
+    //         }
+    //     }
+    // }
+    // req.open('POST', _URL);
+    // req.setRequestHeader('Content-Type', 'text/html');
+    // req.send(`userid=${id}`);
 }
 
 function submitForm (e) {
@@ -103,7 +123,7 @@ function asyncLogin (e) {
         return res.text();
     })
     .then((data) => {
-        if (data === 'FAILED'){
+        if (data === 'NOT_VERIFIED'){
             document.
                 querySelector('.login-alert').
                 classList.

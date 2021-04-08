@@ -23,17 +23,16 @@ public class GeneralService {
         return map;
     }
 
-
-    public Token createRoomService (String roomName) {
+    public Token createRoomService (String roomName, String userId) {
         return access.insertRoom(
                 SoftRoom.
                 Builder.
-                createNewRoom(roomName));
+                createNewRoom(roomName, userId));
 
     }
 
-    public Token deleteRoomService (String roomId) {
-        return access.deleteRoom(roomId);
+    public Token deleteRoomService (String roomId, String masterId) {
+        return access.deleteRoom(roomId, masterId);
     }
 
     public Token updateRoomService (String roomId, String roomName) {

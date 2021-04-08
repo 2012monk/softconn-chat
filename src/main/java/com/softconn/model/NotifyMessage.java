@@ -14,6 +14,7 @@ public class NotifyMessage implements Serializable {
     private String message;
     private String userId;
     private Map<String, Integer> list;
+    private int currentUserNumber;
 
 
     public NotifyMessage() {
@@ -24,6 +25,7 @@ public class NotifyMessage implements Serializable {
         this.message = message;
         this.userId = userId;
         this.list = list;
+        this.currentUserNumber = list.size();
     }
 
     public MessageType getType() {

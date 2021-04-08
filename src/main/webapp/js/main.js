@@ -5,10 +5,7 @@ const mainDiv = document.getElementById('main-view');
 const listTmpl = document.getElementById('list-tmpl');
 var templates = null;
 
-// const _URL = "http://localhost:47788/soft/";
-// const _URL = "http://112.169.196.76:47788/soft/";
-
-const _URL = "http://112.187.182.64:47788/soft/"; //home
+const _URL = window.CONFIG.HOME_URL;
 
 document.querySelector('#home a').href = _URL+"conn";
 document.querySelector('#logout a').href = _URL+"login/logout";
@@ -18,25 +15,46 @@ document.querySelector('#logout a').href = _URL+"login/logout";
 document.querySelector('nav').addEventListener('click', handleListMenu);
 function handleListMenu (e) {
     if (e.target.id === 'user/list' ||
-            e.target.id === 'room/list'){
-        handleRoomOut();    
-        fetch(`${_URL}${e.target.id}`)
-            .then((res) => {
-                return res.json()
-            })
-            .then((data) => {
-                // console.log(listTmpl.innerHTML);
-                if (e.target.id === 'room/list'){
-                    data.room = true;
-                }
-                // console.log(JSON.stringify(data));
+        e.target.id === 'room/list') {
+        handleRoomOut();
+        getList(e.target.id);
+        // fetch(`${_URL}${e.target.id}`)
+        //     .then((res) => {
+        //         return res.json()
+        //     })
+        //     .then((data) => {
+        //         // console.log(listTmpl.innerHTML);
+        //         if (e.target.id === 'room/list'){
+        //             data.room = true;
+        //         }
+        //         // console.log(JSON.stringify(data));
+        //
+        //         mainDiv.innerHTML = Mustache.render(listTmpl.innerHTML, data);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+        // }
+    }
+}
 
-                mainDiv.innerHTML = Mustache.render(listTmpl.innerHTML, data);
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        }
+function getList(_url) {
+    fetch(_URL + _url)
+        .then((res) => {
+            return res.json()
+        })
+        .then((data) => {
+            // console.log(listTmpl.innerHTML);
+            if (_url=== 'room/list'){
+                data.room = true;
+            }
+            // console.log(JSON.stringify(data));
+
+            mainDiv.innerHTML = Mustache.render(listTmpl.innerHTML, data);
+        })
+        .catch((err) => {
+            console.log(err);
+        })
 }
 
 
@@ -51,12 +69,10 @@ window.onload = (e) => {
         .then((data) => {
             const json = data;
             console.log(JSON.stringify(json));
-            const r = Mustache.render(document.getElementById('friend-info-tmpl').innerHTML, json);
-            infoDiv.innerHTML = r;
+            infoDiv.innerHTML = Mustache.render(document.getElementById('user-info-tmpl').innerHTML, json);
             const g = document.getElementById('greetings');
-            document.querySelector('nav').innerHTML +=
+            document.querySelector('.greetings').innerHTML +=
                 Mustache.render(g.innerHTML, json);
-            return;
         })
         .catch((e) => {
             console.log(e)
@@ -75,23 +91,23 @@ window.onload = (e) => {
         .catch((e) => {
             console.log(e)
         })
+    getList("room/list");
+    // fetch(`${_URL}room/list`)
+    // .then((res) => {
+    //     return res.json()
+    // })
+    // .then((data) => {
+    //     // console.log(listTmpl.innerHTML);
+    //     if (e.target.id === 'room/list'){
+    //         data.room = true;
+    //     }
+    //     // console.log(JSON.stringify(data));
 
-    fetch(`${_URL}room/list`)
-    .then((res) => {
-        return res.json()
-    })
-    .then((data) => {
-        // console.log(listTmpl.innerHTML);
-        if (e.target.id === 'room/list'){
-            data.room = true;
-        }
-        // console.log(JSON.stringify(data));
-
-        mainDiv.innerHTML = Mustache.render(listTmpl.innerHTML, data);
-    })
-    .catch((err) => {
-        console.log(err)
-    })
+    //     mainDiv.innerHTML = Mustache.render(listTmpl.innerHTML, data);
+    // })
+    // .catch((err) => {
+    //     console.log(err)
+    // })
 
 }
 
@@ -165,7 +181,7 @@ function userMenuHandler (e) {
                 return res.text();
             })
             .then((data) => {
-                if (data === 'success'){
+                if (data === 'ADD_SUCCESS'){
                     document.querySelector('.success-msg').classList.remove('hidden');
                 }else{
                     document.querySelector('.failed-msg').classList.remove('hidden');
@@ -194,7 +210,8 @@ function userMenuHandler (e) {
             roomModView('create');
             break;
         case "delete-room":
-            roomModView('delete');
+            // roomModView('delete');
+            roomDelHandle();
             break;
         case "change-room":
             roomModView('update')
@@ -208,7 +225,9 @@ function userMenuHandler (e) {
 
 function roomDelHandle () {
     const p = document.querySelector('.room-mod-menu form');
-    p.action(_URL+"room/delete");
+    p.action = _URL+"room/delete";
+    p.method = 'POST';
+    p.submit();
 }
 
 function roomModView(mode) {
@@ -266,7 +285,8 @@ function sendRoomMode(e) {
         return res.text();
     })
     .then((data) => {
-        if (data==='SUCCESS'){
+        if (data==='ADD_SUCCESS'){
+            location.reload();
             alert('success')
         }
     })

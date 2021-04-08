@@ -12,6 +12,7 @@ public class SoftRoom {
 
     public static class Builder {
         private Map<String, List<SoftUser>> roomUsers;
+        private String masterId;
         private String roomId;
         private String roomName;
         private String crtDate;
@@ -19,6 +20,11 @@ public class SoftRoom {
         private List<String> clientList;
 
         public Builder() {
+        }
+
+        public Builder setMasterId (String masterId) {
+            this.masterId = masterId;
+            return this;
         }
 
         public Builder setUserList (List<SoftUser> userList) {
@@ -48,20 +54,23 @@ public class SoftRoom {
             return this;
         }
 
-        public SoftRoom createNewRoom (String roomName) {
+        public SoftRoom createNewRoom (String roomName, String userId) {
             SimpleDateFormat fmt = new SimpleDateFormat("yyMMddHHmmss");
             Date date = new Date();
+            this.masterId = userId;
             this.roomName = roomName;
-            this.roomId = fmt.format(date)+roomName+UUID.randomUUID().toString();
+            this.roomId = fmt.format(date)+roomName.trim()+UUID.randomUUID().toString();
             this.crtDate = date.toString();
-            return new SoftRoom(roomId, roomName, crtDate);
+            return new SoftRoom(masterId, roomId, roomName, crtDate);
         }
 
         public SoftRoom build () {
-            return new SoftRoom(roomId, roomName, crtDate, currentUsers,roomUsers, clientList);
+
+            return new SoftRoom(masterId, roomId, roomName, crtDate, currentUsers,roomUsers, clientList);
         }
     }
 
+    private String masterId;
     private String roomId;
     private String roomName;
     private String crtDate;
@@ -71,6 +80,25 @@ public class SoftRoom {
     @JsonIgnore
     private List<String> clientList;
     public SoftRoom() {}
+
+    public SoftRoom(String masterId, String roomId, String roomName,
+                    String crtDate, int currentUsers, Map<String,
+            List<SoftUser>> roomUsers, List<String> clientList) {
+        this.masterId = masterId;
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.crtDate = crtDate;
+        this.currentUsers = currentUsers;
+        this.roomUsers = roomUsers;
+        this.clientList = clientList;
+    }
+
+    public SoftRoom(String masterId, String roomId, String roomName, String crtDate) {
+        this.masterId = masterId;
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.crtDate = crtDate;
+    }
 
     public SoftRoom(String roomId, String roomName, String crtDate) {
         this.roomId = roomId;
@@ -85,7 +113,8 @@ public class SoftRoom {
         this.roomUsers = roomUsers;
     }
 
-    public SoftRoom(String roomId, String roomName, String crtDate, int currentUsers, Map<String, List<SoftUser>> roomUsers) {
+    public SoftRoom(String roomId, String roomName, String crtDate, int currentUsers,
+                    Map<String, List<SoftUser>> roomUsers) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.crtDate = crtDate;
@@ -93,13 +122,18 @@ public class SoftRoom {
         this.roomUsers = roomUsers;
     }
 
-    public SoftRoom(String roomId, String roomName, String crtDate, int currentUsers, Map<String, List<SoftUser>> roomUsers, List<String> clientList) {
+    public SoftRoom(String roomId, String roomName, String crtDate, int currentUsers,
+                    Map<String, List<SoftUser>> roomUsers, List<String> clientList) {
         this.roomId = roomId;
         this.roomName = roomName;
         this.crtDate = crtDate;
         this.currentUsers = currentUsers;
         this.roomUsers = roomUsers;
         this.clientList = clientList;
+    }
+
+    public String getMasterId() {
+        return masterId;
     }
 
     public String getRoomId() {
@@ -126,7 +160,9 @@ public class SoftRoom {
 
 
     public void addClient (String userId) {
-        clientList.add(userId);
+        if (!clientList.contains(userId)){
+            clientList.add(userId);
+        }
     }
 //        roomUsers.get("roomUsers").add(userId);
 //        caller.update(roomId, );

@@ -47,9 +47,9 @@ public class SoftUser {
 
     }
 
-    private String userId;
-    private ArrayList<String> friendList;
-    private String email;
+    private final String userId;
+    private final ArrayList<String> friendList;
+    private final String email;
     private String password;
     private boolean online;
 

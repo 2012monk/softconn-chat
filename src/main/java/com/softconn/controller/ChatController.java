@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.websocket.*;
-import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
-@ServerEndpoint(value = "/melt/{type}/{typeId}", configurator = com.softconn.util.SocketConfigurator.class)
+@ServerEndpoint(value = "/melt", configurator = com.softconn.util.SocketConfigurator.class)
 public class ChatController {
 
     private static final Logger log = LogManager.getLogger(ChatController.class);
@@ -30,6 +29,8 @@ public class ChatController {
     private static final UserAcess userAccess = new UserAcess();
     private static final ConcurrentHashMap<String, Session> userPool = new ConcurrentHashMap<>();
     private static final HashMap<String, SoftRoom> roomPool = new HashMap<>();
+
+
     private String userId;
 
     static {
@@ -50,31 +51,26 @@ public class ChatController {
 
 
     @OnOpen
-    public void onOpen(@PathParam("type") String type,
-                       @PathParam("typeId") String recvId,
-                       Session session, EndpointConfig config) {
+    public void onOpen(Session session, EndpointConfig config) {
         log.info("connect");
         userId = (String) config.getUserProperties().get("userId");
+        config.getUserProperties().put("roomId", "");
         log.info(userId);
         if (!userPool.containsKey(userId)) userPool.put(userId, session);
-        log.info(userId);
-        log.info(userPool.size());
+
         sendCall(userId, true);
     }
 
     @OnMessage
-    public void onMessage(@PathParam("type") String type,
-                          @PathParam("typeId") String recvId,
-                          Session session, String reqMsg) {
+    public void onMessage(Session session, String reqMsg) {
         log.debug(userId + reqMsg);
         try {
             SoftMessage parsed = mapper.readValue(reqMsg, SoftMessage.class);
             parsed.setSenderId(userId);
-            log.info(parsed);
-            handleMessage(parsed);
-
-            String json = mapper.writeValueAsString(parsed);
-            log.info(json + "PARSED");
+//            log.info(parsed);
+            handleMessage(session, parsed);
+//            String json = mapper.writeValueAsString(parsed);
+//            log.info(json + "PARSED");
         } catch (Exception e) {
 //            e.printStackTrace();
             e.printStackTrace();
@@ -87,7 +83,10 @@ public class ChatController {
     public void onClose(Session session) {
         String userId = (String) session.getUserProperties().get("userId");
         userPool.remove(userId);
+
         sendCall(userId, false);
+
+        handleOut(session);
 
     }
 
@@ -97,10 +96,10 @@ public class ChatController {
 
     }
 
-    public void handleMessage(SoftMessage msg) {
+    public void handleMessage(Session session, SoftMessage msg) {
         switch (msg.getType()) {
             case ROOM_ENTER:
-                handleEnter(msg);
+                handleEnter(session, msg);
                 break;
             case ROOM_MSG:
                 roomMsg(msg);
@@ -109,27 +108,45 @@ public class ChatController {
                 privateMsg(msg);
                 break;
             case ROOM_OUT:
-                handleOut(msg);
+                handleOut(session, msg);
                 break;
         }
 
 
     }
 
-    public void handleOut(SoftMessage msg) {
+    public void handleOut(Session session){
+//        String userID = (String) session.getUserProperties().get("userId");
+        for (SoftRoom r: roomPool.values()){
+            r.pullClient(userId);
+        }
+    }
+
+    public void handleOut(Session session, SoftMessage msg) {
         String userId = msg.getSenderId();
         String roomId = msg.getRoomId();
-        if (roomId != null || !roomId.equals("")) {
+        session.getUserProperties().put("roomId", null);
+        if (roomId != null && !roomId.equals("")) {
             roomPool.get(roomId).pullClient(userId);
             sendCall(roomId, userId, roomPool.get(roomId).getCurrentUsers());
             access.deleteRoomUser(roomId, userId);
         }
     }
 
-    public void handleEnter(SoftMessage msg) {
+    public void handleEnter(Session session, SoftMessage msg) {
         String userId = msg.getSenderId();
         String roomId = msg.getRoomId();
+        SoftRoom room = roomPool.get(roomId);
+        session.getUserProperties().put("roomId", roomId);
+
+        if (room == null){
+            room = access.getRoomById(roomId);
+            roomPool.put(roomId, room);
+        }
+
         roomPool.get(roomId).addClient(userId);
+
+
         sendCall(roomId, userId, roomPool.get(roomId).getCurrentUsers());
         access.insertRoomUser(roomId, userId);
 
@@ -171,8 +188,11 @@ public class ChatController {
         try {
             String json = mapper.writeValueAsString(msg);
             log.info(json);
-            for (String s : room.getClientList()) {
-                userPool.get(s).getBasicRemote().sendText(json);
+            if (userPool.size() > 0){
+                for (String s : room.getClientList()) {
+                    userPool.get(s).getBasicRemote().sendText(json);
+                    log.info(s, json);
+                }
             }
         } catch (JsonParseException je) {
             log.warn(je.getMessage());
@@ -191,6 +211,7 @@ public class ChatController {
         resMsg.setType(MessageType.NOTIFY);
         resMsg.setMessage(userId + "  left say bye...");
         resMsg.setUserList(list);
+//        resMsg.setCurrentUserNumber(roomUserCount);
         roomMsg(resMsg);
 
         NotifyMessage notify = new NotifyMessage();
@@ -227,7 +248,9 @@ public class ChatController {
             String id = s.getUserId();
             try {
                 String json = mapper.writeValueAsString(msg);
-                userPool.get(id).getBasicRemote().sendText(json);
+                if (userPool.containsKey(id)){
+                    userPool.get(id).getBasicRemote().sendText(json);
+                }
             } catch (Exception e) {
                 log.warn(e.getMessage());
             }

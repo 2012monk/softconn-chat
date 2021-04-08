@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Oxygen&display=swap');
 html, body {
     height: 100%;
     width:100%;
@@ -7,12 +8,16 @@ html, body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    font-family: 'Oxygen', sans-serif;
+}
+
+h1 {
+    color: wheat;
 }
 
 section {
     position: relative;
     box-sizing: border-box;
-    display: block;
     width: 40%;
     height: 30%;
     display: flex;

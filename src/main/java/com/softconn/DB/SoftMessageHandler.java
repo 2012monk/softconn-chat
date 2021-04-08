@@ -16,7 +16,10 @@ public class SoftMessageHandler {
     }
 
     public void handleMsgLog (SoftMessage msg, boolean isRead) {
-        String sql = "INSERT INTO MSG_REPO (" +
+//        String sql = "INSERT INTO MSG_REPO (" +
+//                "MSG_NUM, MSG_BODY, MSG_TYPE, SENDER_ID, FRIEND_ID, ROOM_ID, IS_READ)" +
+//                "VALUES (?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO soft.MSG_REPO (" +
                 "MSG_NUM, MSG_BODY, MSG_TYPE, SENDER_ID, FRIEND_ID, ROOM_ID, IS_READ)" +
                 "VALUES (?,?,?,?,?,?,?)";
         Connection conn = getConn();
@@ -40,6 +43,8 @@ public class SoftMessageHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }finally {
+            close(conn);
         }
     }
 

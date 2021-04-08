@@ -23,7 +23,8 @@ import java.util.Enumeration;
         @WebInitParam(name ="encoding", value="UTF-8")
     })
 public class CORSFilter implements Filter {
-    Logger log = LogManager.getLogger(CORSFilter.class);
+    private final Logger log = LogManager.getLogger(CORSFilter.class);
+    private static final String url = Config.HOME_URL;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -52,12 +53,12 @@ public class CORSFilter implements Filter {
                 log.debug(s+"  :  "+rq.getHeader(s));
             }
 
-            //학원
+//            //학원
 //            String url = "http://112.169.196.76:47788";
-            //HOME
-            String url = "http://112.187.182.64:47788";
-            //localhost
-//            String url = "http://localhost:47788";
+//            //HOME
+////            String url = "http://112.187.182.64:47788";
+//            //localhost
+////            String url = "http://localhost:47788";
 
             rs.setHeader("Access-Control-Allow-Credentials", "true");
             rs.setHeader("Access-Control-Allow-Origin", url);

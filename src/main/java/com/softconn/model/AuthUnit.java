@@ -18,6 +18,11 @@ public class AuthUnit {
 
     private Token token;
 
+//    public static void main(String[] args) {
+//        SoftLogInToken t = new SoftLogInToken("test1", "1234");
+//        getVerified(t);
+//    }
+
     public static Token getVerified(SoftLogInToken user) {
         String sql = "{call GETAUTH(?,?,?)}";
         Connection conn = getConn();
@@ -27,9 +32,12 @@ public class AuthUnit {
         Token token = Token.NOT_VERIFIED;
         try {
             call = conn.prepareCall(sql);
+            log.info(user.getUserID());
             call.setString(1, user.getUserID());
             call.setString(2, user.getUserPw());
-            call.setInt(3,0);
+//            call.setInt(3,0);
+            call.registerOutParameter(1, Types.VARCHAR);
+            call.registerOutParameter(2, Types.VARCHAR);
             call.registerOutParameter(3, Types.INTEGER);
             log.info(user.getUserID()+user.getUserPw());
             log.debug(call.executeUpdate());
@@ -41,6 +49,8 @@ public class AuthUnit {
             return token;
         }catch (Exception e){
             e.printStackTrace();
+        }finally {
+            close(conn);
         }
         return token;
     }

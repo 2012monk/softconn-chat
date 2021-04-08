@@ -1,7 +1,6 @@
 package com.softconn.model;
 
 import com.softconn.util.Token;
-import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -16,7 +15,8 @@ public class RoomAccess {
 
 
     public List<SoftRoom> getAllRoom () {
-        String sql = "SELECT * FROM ROOM_REPO";
+//        String sql = "SELECT * FROM ROOM_REPO";
+        String sql = "SELECT * FROM soft.ROOM_REPO";
         Connection conn = getConn();
         ArrayList<SoftRoom> list = new ArrayList<>();
         Field[] args = SoftRoom.class.getDeclaredFields();
@@ -50,7 +50,8 @@ public class RoomAccess {
 
 
     public SoftRoom getRoomById (String roomId) {
-        String sql = "SELECT * FROM ROOM_REPO WHERE ROOM_ID=?";
+//        String sql = "SELECT * FROM ROOM_REPO WHERE ROOM_ID=?";
+        String sql = "SELECT * FROM soft.ROOM_REPO WHERE ROOM_ID=?";
         Connection conn = getConn();
         List<SoftUser> userList = getRoomUserList(roomId);
         try {
@@ -99,10 +100,13 @@ public class RoomAccess {
 //        String sql = "SELECT * FROM ROOM_USER_REPO " +
 //                "JOIN USER_INFO UI on ROOM_USER_REPO.USER_ID = UI.USER_ID WHERE ROOM_ID=?";
 
-        String sql = "SELECT ROOM_ID, UI.USER_ID, DECODE(SESSION_ID, null, 0, 1) ISONLINE FROM ROOM_USER_REPO\n" +
-                "    JOIN USER_INFO UI on ROOM_USER_REPO.USER_ID = UI.USER_ID\n" +
-                "LEFT OUTER JOIN SESS_REPO SR on ROOM_USER_REPO.USER_ID = SR.USER_ID\n" +
-                "WHERE ROOM_ID=?";
+//        String sql = "SELECT ROOM_ID, UI.USER_ID, DECODE(SESSION_ID, null, 0, 1) ISONLINE FROM ROOM_USER_REPO\n" +
+//                "    JOIN USER_INFO UI on ROOM_USER_REPO.USER_ID = UI.USER_ID\n" +
+//                "LEFT OUTER JOIN SESS_REPO SR on ROOM_USER_REPO.USER_ID = SR.USER_ID\n" +
+//                "WHERE ROOM_ID=?";
+
+        String sql = "SELECT ROOM_ID, ROOM_USER_REPO.USER_ID, ISONLINE FROM soft.ROOM_USER_REPO " +
+                "JOIN soft.ONLINE_USERS O ON ROOM_USER_REPO.USER_ID = O.USER_ID WHERE ROOM_ID=?";
         Connection conn = getConn();
         try {
             PreparedStatement prst = conn.prepareStatement(sql);
@@ -128,7 +132,8 @@ public class RoomAccess {
     }
 
     public Token updateRoom (String roomId, String roomName) {
-        String sql = "UPDATE ROOM_REPO SET ROOM_NAME=? WHERE ROOM_ID=?";
+//        String sql = "UPDATE ROOM_REPO SET ROOM_NAME=? WHERE ROOM_ID=?";
+        String sql = "UPDATE soft.ROOM_REPO SET ROOM_NAME=? WHERE ROOM_ID=?";
         Connection conn = getConn();
         try {
             PreparedStatement prst = conn.prepareStatement(sql);
@@ -147,12 +152,15 @@ public class RoomAccess {
         return Token.ERROR;
     }
 
-    public Token deleteRoom (String roomId) {
-        String sql = "DELETE FROM ROOM_REPO WHERE ROOM_REPO.ROOM_ID=?";
+    public Token deleteRoom (String roomId, String masterId) {
+//        String sql = "DELETE FROM ROOM_REPO WHERE ROOM_REPO.ROOM_ID=?";
+
+        String sql = "DELETE FROM soft.ROOM_REPO WHERE ROOM_REPO.ROOM_ID=? AND MASTER_ID=?";
         Connection conn = getConn();
         try {
             PreparedStatement prst = conn.prepareStatement(sql);
             prst.setString(1, roomId);
+            prst.setString(2, masterId);
 
             
             if (prst.executeUpdate() > 0) {
@@ -170,13 +178,16 @@ public class RoomAccess {
     }
 
     public Token insertRoom (SoftRoom room) {
-        String sql = "INSERT INTO ROOM_REPO (ROOM_ID, ROOM_NAME) " +
-                "VALUES (?,?)";
+//        String sql = "INSERT INTO ROOM_REPO (ROOM_ID, ROOM_NAME) " +
+//                "VALUES (?,?)";
+        String sql = "INSERT INTO soft.ROOM_REPO (ROOM_ID, ROOM_NAME, MASTER_ID) " +
+                "VALUES (?,?,?)";
         Connection conn = getConn();
         try {
             PreparedStatement prst = conn.prepareStatement(sql);
             prst.setString(1, room.getRoomId());
             prst.setString(2, room.getRoomName());
+            prst.setString(3, room.getMasterId());
             if (prst.executeUpdate() > 0 ){
                 conn.commit();
                 return Token.ADD_SUCCESS;
@@ -193,10 +204,45 @@ public class RoomAccess {
     }
 
     public Token insertRoomUser (String roomId, String userId) {
+        String sql = "INSERT INTO soft.ROOM_USER_REPO (ROOM_ID, USER_ID) VALUES (?,?) " +
+                "ON DUPLICATE KEY UPDATE  ROOM_ID=?";
+        Connection conn = getConn();
+        try {
+            PreparedStatement prst = conn.prepareStatement(sql);
+            prst.setString(1, roomId);
+            prst.setString(2, userId);
+            prst.setString(3, roomId);
+            if (prst.executeUpdate() == 1){
+                conn.commit();
+                return Token.SUCCESS;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            close(conn);
+        }
+
+
         return Token.FAILED;
     }
 
     public Token deleteRoomUser (String roomId, String userId) {
+        String sql = "DELETE FROM soft.ROOM_REPO WHERE ROOM_ID=? AND MASTER_ID=?";
+        Connection conn = getConn();
+        try {
+            PreparedStatement prst = conn.prepareStatement(sql);
+            prst.setString(1, roomId);
+            prst.setString(2, userId);
+
+            if (prst.executeUpdate() == 1) {
+                conn.commit();
+                return Token.SUCCESS;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            close(conn);
+        }
         return Token.FAILED;
     }
 

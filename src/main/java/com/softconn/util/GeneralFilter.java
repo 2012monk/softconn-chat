@@ -22,16 +22,23 @@ import java.util.Enumeration;
         value = "/*")
 public class GeneralFilter implements Filter {
     private static final Logger log = LogManager.getLogger(GeneralFilter.class);
+    private static  String encoding;
 
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        filterConfig.getInitParameter("encoding");
+        encoding = filterConfig.getInitParameter("encoding");
 //        this.encoding = "UTF-8";
 
     }
 
     // CORS VERIFY
+
+    public String[] getUri(HttpServletRequest rq){
+        String s = rq.getRequestURI().substring(1);
+        return s.split("/");
+    }
+
 
     @Override
     public void doFilter(ServletRequest servletRequest,
@@ -40,104 +47,64 @@ public class GeneralFilter implements Filter {
         HttpServletRequest rq = (HttpServletRequest) servletRequest;
         HttpServletResponse rs = (HttpServletResponse) servletResponse;
 
-        String[] rqUri = rq.getRequestURI().split("/");
-
+        String s = rq.getRequestURI().substring(1);
+        String[] rqUri = getUri(rq);
         rq.setCharacterEncoding("UTF-8");
         rs.setCharacterEncoding("UTF-8");
-        log.info(rq.getRequestURI());
-//        log.warn(rq.getPathInfo());
-
-        String path = rq.getPathInfo();
-
-        String sessionId = "";
-        HttpSession session = null;
 
 
-//        try {
-////            SessionH
-//            session = rq.getSession(false);
-//            if (session != null){
-//                sessionId = (String) session.getAttribute("sessionId");
-//            }
-//        }catch (Exception e){
-//            log.warn(e.getMessage());
-//        }
-//
-//        boolean isLogedIn = session != null && sessionId != null && !sessionId.equals("");
-//
-//        log.warn(isLogedIn);
+        // info logs
+        Enumeration header = rq.getHeaderNames();
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("REQ URL : ").append(rq.getRequestURL()).append("\r\n");
+
+        sb.append("IP : ").append(rq.getRemoteAddr()).append("\r\n");
+        sb.append("HOST : ").append(rq.getRemoteHost()).append("\r\n");
+        sb.append("PORT : ").append(rq.getRemotePort()).append("\r\n");
+        sb.append("PROTOCOL : ").append(rq.getProtocol()).append("\r\n");
+        sb.append("Scheme : ").append(rq.getScheme()).append("\r\n");
+
+        while (header.hasMoreElements()) {
+            String h = (String) header.nextElement();
+            sb.append(h).append(":").append(rq.getHeader(h)).append("\r\n");
+        }
+
+        log.info(sb.toString());
+
+
+
+
+        String[] valUri = {"main.html", "user", "room", "login" ,"asset"};
         if (SessionHandler.verifySession(rq)){
+            log.warn("VERIFIED FROM FILTER");
             // Enter request
-            if (rqUri.length < 3){
-                log.info(Arrays.toString(rqUri));
+            if (rqUri[0].equals("")){
+
+                log.info("VERIFIED MOVE TO MAIN");
                 servletRequest.getRequestDispatcher("/main.html").forward(servletRequest, servletResponse);
             }else{
                 filterChain.doFilter(servletRequest, servletResponse);
 
             }
         }else{
-            if (rqUri.length > 2 && rqUri[2].equals("login")){
-                log.info(Arrays.toString(rqUri));
+//            if (rqUri.length > 2 && rqUri[2].equals("login")){
+            if (rqUri[0].equals("login")){
+
                 filterChain.doFilter(servletRequest, servletResponse);
 
 //                servletRequest.getRequestDispatcher("/login").forward(servletRequest, servletResponse);
             }
-            else if (rqUri.length > 2 && rqUri[2].equals("asset")){
+//            else if (rqUri.length > 2 && rqUri[2].equals("asset")){
+            else if (rqUri[0].equals("asset") || rqUri[0].equals("favicon.icon")){
                 filterChain.doFilter(servletRequest, servletResponse);
             }
             else{
-                log.warn(Arrays.toString(rqUri));
+//                log.warn(Arrays.toString(rqUri));
                 servletRequest.getRequestDispatcher("/login").forward(servletRequest, servletResponse);
             }
         }
 
-
-
-//        filterChain.doFilter(servletRequest, servletResponse);
-//
-//
-//            String optionRes = "OPTIONS, GET, POST, HEAD";
-//            if (rq.getMethod().equals("OPTION")) {
-//                rs.setHeader("Allow", optionRes);
-//
-//            }
-//            if (rq.getHeader("origin") != null) {
-//                Enumeration e = rq.getHeaderNames();
-//                while (e.hasMoreElements()){
-//                    String s = (String) e.nextElement();
-//                    log.info(s+"  :  "+rq.getHeader(s));
-//                }
-////                for (Cookie c: rq.getCo)
-////                String url = "http://localhost:47788";
-//                String url = "http://112.169.196.76:47788";
-//                rs.setHeader("Access-Control-Allow-Credentials", "true");
-//                rs.setHeader("Access-Control-Allow-Origin", url);
-//                rs.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
-//                rs.setHeader("Access-Control-Max-Age", "3600");
-//                rs.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept, X-Requested-With, remember-me");
-////                rs.setContentType("application/x-www-form-urlencoded");
-//                log.warn(rq.getCookies());
-//            }
-//            filterChain.doFilter(servletRequest, servletResponse);
-//        }
-
-//        Enumeration header = rq.getHeaderNames();
-//        while (header.hasMoreElements()){
-//            String s = (String) header.nextElement();
-////            rq.getH
-////            System.out.println(s+"  :  "+rq.getHeader(s));
-//            String h = "Access-Control-Allow-Origin";
-//            if (s.equals("origin")){
-//                rs.setHeader(h, "*");
-//                rs.setHeader("Access-Control-Allow-Credentials", "true");
-//                rs.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-//                rs.setHeader("Access-Control-Max-Age", "3600");
-//                rs.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
-//            }
-//        }
-
-//        System.out.println(servletRequest.getRemoteAddr());
-//        System.out.println(servletRequest.getRemotePort()+"PORT!!!");
 
     }
 }
